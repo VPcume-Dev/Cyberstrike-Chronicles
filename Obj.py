@@ -1,5 +1,14 @@
 from pygame import*
 
+
+class Bullet:
+    def __init__(self, x, y, bullet_distance):
+        self.rect = Rect(x, y, 4, 2)
+        self.speed = 600
+        self.distance = bullet_distance
+    
+
+
 class Player:
     def __init__(self,x,y) -> None: # setting player
         self.rect = Rect(x,y,40,40)

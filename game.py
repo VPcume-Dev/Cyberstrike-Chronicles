@@ -1,5 +1,6 @@
 from pygame import*
 from Obj import*
+from functions import*
 
 window = display.set_mode([800,600])
 display.set_caption("Cyberstrike Chronicles")
