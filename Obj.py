@@ -4,7 +4,7 @@ from pygame import*
 class Bullet:
     def __init__(self, x, y, direction, bullet_distance = None):
         self.rect = Rect(x, y, 4, 4)
-        self.speed = 600
+        self.speed = 400
         self.distance = bullet_distance
         self.direction = direction
     def update(self, delta):
@@ -37,3 +37,10 @@ class Player:
             self.direction = "up"
         self.rect.x += movex * delta * self.sped
         self.rect.y += movey * delta * self.sped
+
+class Dog:
+    def __init__(self,x,y) -> None:
+        self.rect = Rect(x,y,40,40)
+        self.speed = 250
+    def update(self,delta,plr):
+        pass # pls help me, i cant do it
