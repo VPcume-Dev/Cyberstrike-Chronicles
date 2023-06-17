@@ -23,6 +23,7 @@ class Player:
         self.rect = Rect(x,y,40,40)
         self.sped = 300
         self.direction = "up"
+        self.bullets = 10
     def update(self, delta):
         keys = key.get_pressed()
         movex = keys[K_RIGHT] - keys[K_LEFT]
@@ -47,11 +48,12 @@ class Dog:
         dodge = Rect(self.rect.x-range_dodge,self.rect.y-range_dodge,range_dodge*2+self.rect.width,range_dodge*2+self.rect.height)
         movex = sign(plr.rect.x - self.rect.x)
         movey = sign(plr.rect.y - self.rect.y)
-        self.rect.x += movex * self.speed * delta
-        self.rect.y += movey * self.speed * delta
         bullet = dodge.collidelist(bullets)
         if bullet >= 0:
             if bullets[bullet].direction in ["right","left"]:
-                self.rect.y += sign(self.rect.y-bullets[bullet].rect.y) * self.speed*5 * delta
+                self.rect.y += sign(self.rect.y-bullets[bullet].rect.y) * self.speed*2.2 * delta
             if bullets[bullet].direction in ["up","down"]:
-                self.rect.x += sign(self.rect.x-bullets[bullet].rect.x) * self.speed*5 * delta
+                self.rect.x += sign(self.rect.x-bullets[bullet].rect.x) * self.speed*2.2 * delta
+        else:
+            self.rect.x += movex * self.speed * delta
+            self.rect.y += movey * self.speed * delta
