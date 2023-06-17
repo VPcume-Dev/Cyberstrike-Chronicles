@@ -1,5 +1,5 @@
 from pygame import*
-
+from functions import*
 
 class Bullet:
     def __init__(self, x, y, direction, bullet_distance = None):
@@ -41,6 +41,9 @@ class Player:
 class Dog:
     def __init__(self,x,y) -> None:
         self.rect = Rect(x,y,40,40)
-        self.speed = 250
+        self.speed = 100
     def update(self,delta,plr):
-        pass # pls help me, i cant do it
+        movex = sign(plr.rect.x - self.rect.x)
+        movey = sign(plr.rect.y - self.rect.y)
+        self.rect.x += movex * self.speed * delta
+        self.rect.y += movey * self.speed * delta
