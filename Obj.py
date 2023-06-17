@@ -41,9 +41,17 @@ class Player:
 class Dog:
     def __init__(self,x,y) -> None:
         self.rect = Rect(x,y,40,40)
-        self.speed = 100
-    def update(self,delta,plr):
+        self.speed = 150
+    def update(self,delta,plr,bullets):
+        range_dodge = 20
+        dodge = Rect(self.rect.x-range_dodge,self.rect.y-range_dodge,range_dodge*2+self.rect.width,range_dodge*2+self.rect.height)
         movex = sign(plr.rect.x - self.rect.x)
         movey = sign(plr.rect.y - self.rect.y)
         self.rect.x += movex * self.speed * delta
         self.rect.y += movey * self.speed * delta
+        bullet = dodge.collidelist(bullets)
+        if bullet >= 0:
+            if bullets[bullet].direction in ["right","left"]:
+                self.rect.y += sign(self.rect.y-bullets[bullet].rect.y) * self.speed*5 * delta
+            if bullets[bullet].direction in ["up","down"]:
+                self.rect.x += sign(self.rect.x-bullets[bullet].rect.x) * self.speed*5 * delta
