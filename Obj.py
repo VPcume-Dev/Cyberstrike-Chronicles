@@ -43,6 +43,7 @@ class Dog:
     def __init__(self,x,y) -> None:
         self.rect = Rect(x,y,40,40)
         self.speed = 150
+        self.flip = False
     def update(self,delta,plr,bullets):
         range_dodge = 20
         dodge = Rect(self.rect.x-range_dodge,self.rect.y-range_dodge,range_dodge*2+self.rect.width,range_dodge*2+self.rect.height)
@@ -51,6 +52,10 @@ class Dog:
         angle = math.atan2(dy, dx)
         distance = math.hypot(dx, dy)
         bullet = dodge.collidelist(bullets)
+        if sign(dx) < 0:
+            self.flip = True
+        if sign(dx) > 0:
+            self.flip = False
         if bullet >= 0:
             if bullets[bullet].direction in ["right","left"]:
                 self.rect.y += sign(self.rect.y-bullets[bullet].rect.y) * self.speed*2.2 * delta

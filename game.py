@@ -30,7 +30,10 @@ while gameRunnning:
     window.fill([255,255,255])
     for dog in dogs:
         dog.update(delta,plr,bullets)
-        window.blit(dog_img,dog.rect.topleft)
+        if not dog.flip:
+            window.blit(dog_img,dog.rect.topleft)
+        if dog.flip:
+            window.blit(dog_img1,dog.rect.topleft)
         if dog.rect.collidelist(bullets) >= 0:
             bullets.pop(dog.rect.collidelist(bullets))
             dogs.remove(dog)
