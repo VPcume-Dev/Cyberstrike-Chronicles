@@ -40,13 +40,13 @@ while gameRunnning:
         for dog2 in dogs:
             if dog2 != dog:
                 if sprite.collide_rect(dog, dog2):
-                    if abs(dog2.rect.bottom - dog.rect.top) < 10:
+                    if abs(dog2.rect.bottom - dog.rect.top) < 15:
                         dog2.rect.bottom = dog.rect.top
-                    if abs(dog2.rect.left - dog.rect.right) < 10:
+                    if abs(dog2.rect.left - dog.rect.right) < 15:
                         dog2.rect.left = dog.rect.right
-                    if abs(dog2.rect.right - dog.rect.left) < 10:
+                    if abs(dog2.rect.right - dog.rect.left) < 15:
                         dog2.rect.right = dog.rect.left
-                    if abs(dog2.rect.top - dog.rect.bottom) < 10:
+                    if abs(dog2.rect.top - dog.rect.bottom) < 15:
                         dog2.rect.top = dog.rect.bottom
     draw.rect(window, (255,0,0), plr.rect) # draw player
     for i in bullets:

@@ -1,4 +1,5 @@
 from pygame import*
+import random
 from functions import*
 
 class Bullet:
@@ -56,11 +57,11 @@ class Dog:
             self.flip = True
         if sign(dx) > 0:
             self.flip = False
-        if bullet >= 0:
-            if bullets[bullet].direction in ["right","left"]:
-                self.rect.y += sign(self.rect.y-bullets[bullet].rect.y) * self.speed*2.2 * delta
-            if bullets[bullet].direction in ["up","down"]:
-                self.rect.x += sign(self.rect.x-bullets[bullet].rect.x) * self.speed*2.2 * delta
-        else:
-            self.rect.x += math.cos(angle) * self.speed * delta
-            self.rect.y += math.sin(angle) * self.speed * delta
+        if random.randint(1,5) == 1:
+            if bullet >= 0:
+                if bullets[bullet].direction in ["right","left"]:
+                    self.rect.y += sign(self.rect.y-bullets[bullet].rect.y) * self.speed*2.2 * delta
+                if bullets[bullet].direction in ["up","down"]:
+                    self.rect.x += sign(self.rect.x-bullets[bullet].rect.x) * self.speed*2.2 * delta
+        self.rect.x += math.cos(angle) * self.speed * delta
+        self.rect.y += math.sin(angle) * self.speed * delta
