@@ -2,6 +2,8 @@ from pygame import*
 from Obj import*
 from functions import*
 import Menu
+import Gui as gui
+import sys
 
 window = display.set_mode([800,600])
 
@@ -10,6 +12,23 @@ def addText(text, pos, size=16): # text renderer
     Font = font.SysFont("consolas", size, True)
     t = Font.render(text, True, 0)
     window.blit(t,pos)
+
+def pauseMenu():
+    test = gui.Button(Rect(50,50,90,40), (0,0,255), "test", 24)
+    buttons = gui.Group()
+    buttons.add(test)
+    menuRunning = True
+    while menuRunning:
+        delta = time.Clock().tick(60) / 1000
+        for ev in event.get():
+            if ev.type == QUIT:
+                sys.exit()
+            if ev.type == KEYDOWN:
+                if ev.key == K_ESCAPE:
+                    menuRunning = False
+        window.fill((100,100,100))
+        buttons.update(window)
+        display.flip()
 
 # main game run
 def main():
@@ -35,7 +54,7 @@ def main():
                 gameRunnning = False
             if ev.type == KEYDOWN:
                 if ev.key == K_ESCAPE:
-                    gameRunnning = False
+                    pauseMenu()
                 if ev.key == K_SPACE and plr.bullets > 0:
                     bullets.append(Bullet(plr.rect.centerx-2, plr.rect.centery-2, plr.direction))
                     plr.bullets -= 1
