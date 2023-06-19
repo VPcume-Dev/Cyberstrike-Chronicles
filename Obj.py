@@ -2,12 +2,14 @@ from pygame import*
 import random
 from functions import*
 
+# bullet settings
 class Bullet:
     def __init__(self, x, y, direction, bullet_distance = None):
         self.rect = Rect(x, y, 4, 4)
         self.speed = 400
         self.distance = bullet_distance
         self.direction = direction
+
     def update(self, delta):
         if self.direction == "right":
             self.rect.x += self.speed * delta
@@ -25,6 +27,7 @@ class Player:
         self.sped = 300
         self.direction = "up"
         self.bullets = 10
+
     def update(self, delta):
         keys = key.get_pressed()
         movex = keys[K_RIGHT] - keys[K_LEFT]
@@ -45,6 +48,7 @@ class Dog:
         self.rect = Rect(x,y,40,40)
         self.speed = 150
         self.flip = False
+
     def update(self,delta,plr,bullets):
         range_dodge = 20
         dodge = Rect(self.rect.x-range_dodge,self.rect.y-range_dodge,range_dodge*2+self.rect.width,range_dodge*2+self.rect.height)
@@ -53,6 +57,7 @@ class Dog:
         angle = math.atan2(dy, dx)
         distance = math.hypot(dx, dy)
         bullet = dodge.collidelist(bullets)
+
         if sign(dx) < 0:
             self.flip = True
         if sign(dx) > 0:
@@ -63,5 +68,6 @@ class Dog:
                     self.rect.y += sign(self.rect.y-bullets[bullet].rect.y) * self.speed*2.2 * delta
                 if bullets[bullet].direction in ["up","down"]:
                     self.rect.x += sign(self.rect.x-bullets[bullet].rect.x) * self.speed*2.2 * delta
+                    
         self.rect.x += math.cos(angle) * self.speed * delta
         self.rect.y += math.sin(angle) * self.speed * delta
