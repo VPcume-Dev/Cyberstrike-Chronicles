@@ -3,9 +3,16 @@ from Obj import*
 from functions import*
 import Menu
 
+window = display.set_mode([800,600])
+
+# add text function
+def addText(text, pos, size=16): # text renderer
+    Font = font.SysFont("consolas", size, True)
+    t = Font.render(text, True, 0)
+    window.blit(t,pos)
+
 # main game run
 def main():
-    window = display.set_mode([800,600])
     display.set_caption("Cyberstrike Chronicles")
 
     plr = Player(0,0) # set player pos and declare var
@@ -63,6 +70,9 @@ def main():
         for i in bullets:
             i.update(delta)
             draw.rect(window, (0,0,0), i.rect)
+        
+        addText(f"bullets: {plr.bullets}",(0,100))
+
         display.update()
 
 if __name__ == "__main__":
