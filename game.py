@@ -14,9 +14,9 @@ def addText(text, pos, size=16): # text renderer
     window.blit(t,pos)
 
 def pauseMenu():
-    test = gui.Button(Rect(50,50,90,40), (0,0,255), "test", 24)
+    closeBtn = gui.Button(Rect(50,50,90,40), (0,0,255), "close", 24)
     buttons = gui.Group()
-    buttons.add(test)
+    buttons.add(closeBtn)
     menuRunning = True
     while menuRunning:
         delta = time.Clock().tick(60) / 1000
@@ -26,6 +26,8 @@ def pauseMenu():
             if ev.type == KEYDOWN:
                 if ev.key == K_ESCAPE:
                     menuRunning = False
+        if buttons.coi(0):
+            menuRunning = False
         window.fill((100,100,100))
         buttons.update(window)
         display.flip()
