@@ -13,27 +13,32 @@ game_run = True
 
 plr_frames = [pygame.image.load("pixels_00.png"), pygame.image.load("pixels_01.png"),
               pygame.image.load("pixels_02.png"), pygame.image.load("pixels_03.png")]
+delta = pygame.time.Clock().tick(30) / 1000
 
 
 def player_settings():
     Mark = Player()
-    Mark.update_frame()
-    Mark.update_sprites()
+    Mark.movex = 0
+    Mark.movey = 0
 
     key = pygame.key.get_pressed()
 
     if key[K_UP]:
-        Mark.movey = -10
+        Mark.movey = -500
         Mark.status = "running"
     if key[K_DOWN]:
-        Mark.movey = 10
+        Mark.movey = 500
         Mark.status = "running"
     if key[K_RIGHT]:
-        Mark.movey = 10
+        Mark.movey = 500
         Mark.status = "running"
     if key[K_LEFT]:
-        Mark.movey = -10
+        Mark.movey = 500
         Mark.status = "running"
+
+    Mark.update_frame()
+    Mark.update_sprites()
+    Mark.player_movement()
 
 
 def display():
@@ -45,7 +50,7 @@ class Player():
         self.movex = 0
         self.movey = 0
         self.direction = "right"
-        self.status = "walking"
+        self.status = "standing"
         self.frame_count = 0
         self.x = 100
         self.y = 100
@@ -64,18 +69,20 @@ class Player():
         if self.status == "standing":
             self.frame_count = 3
 
-    def moving(self):
-        pass
+    def player_movement(self):
+        self.x += self.movex * delta
+        self.y += self.movey * delta
 
 
 while game_run:
 
     display()
 
+    player_settings()
+
     for event in pygame.event.get():
         if event.type == QUIT:
             game_run = False
             pygame.quit()
 
-    delta = pygame.time.Clock().tick(30) / 1000
     pygame.display.flip()
