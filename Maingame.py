@@ -68,7 +68,7 @@ def display():
 
 device = win32api.EnumDisplayDevices()
 refreshRate = getRefreshRate(device)
-print(refreshRate)`
+print(refreshRate)
 
 class Player():
     def __init__(self):
