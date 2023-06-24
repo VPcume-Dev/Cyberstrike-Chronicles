@@ -143,5 +143,5 @@ while game_run:
         if event.type == QUIT:
             game_run = False
 
-pygame.display.update()
+    pygame.display.update()
 pygame.quit()
