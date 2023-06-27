@@ -49,23 +49,27 @@ class Player():
         self.direction = "right"
         self.running = False
         self.standing = True
+        self.mining = False
         self.frame_count = 0
         self.mine_count = 0
         self.x = 100
         self.y = 100
         self.anim = 0
+        self.mine_anim = 0
         self.frames = [pygame.image.load("pixels/" + img) for img in os.listdir('pixels')]
         self.mine_frames = [pygame.image.load("mining/" + img) for img in os.listdir('mining')]
 
     def update_sprites(self):
-        newImg = pygame.Surface([19,17])
+        newImg = pygame.Surface([35,21])
         newImg.fill([0,255,0])
-        newImg.blit(self.frames[self.frame_count], (0,0))
-        self.hitbox = pygame.Rect(self.x,self.y,19*2,17*2)
+        newImg.blit(self.frames[self.frame_count], (0,21-17))
+        if self.mining:
+            newImg.blit(self.mine_frames[self.mine_count], (10,0))
+        self.hitbox = pygame.Rect(self.x,self.y+(21-17)*2,19*2,17*2)
         newImg.set_colorkey([0,255,0])
         newImg = pygame.transform.scale2x(newImg)
         window.blit(newImg, (self.x, self.y))
-        #pygame.draw.rect(window, (255,0,0), self.hitbox, 2)
+        pygame.draw.rect(window, (255,0,0), self.hitbox, 2)
     
     def update_frame(self, delta):
         if self.running:
@@ -78,6 +82,13 @@ class Player():
         if self.standing:
             self.frame_count = 3
             self.anim = 0
+        if self.mining:
+            self.mine_anim += 50 * delta
+            if self.mine_anim >= 5:
+                self.mine_anim = 0
+                self.frame_count += 1
+                if self.mine_count > 6:
+                    self.mine_count = 0
 
     def player_movement(self, delta):
         self.x += self.movex * delta
