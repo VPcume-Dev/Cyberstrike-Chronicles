@@ -22,7 +22,7 @@ refreshRate = getRefreshRate(device)
 print(refreshRate)
 
 def collideSide(a,b):
-    idk = 20
+    idk = 5
     if a.colliderect(b):
         if abs(a.x + a.width - b.x) < idk:
             return "right"
@@ -37,6 +37,7 @@ class Ore:
     def __init__(self, p_type, pos):
         self.pos = pos
         self.breaking = 0
+        self.breaking_frames = [pygame.image.load("breaking/" + i) for i in os.listdir("breaking")]
         if p_type == "iron":
             self.img = pygame.image.load("iron-ore.png")
             self.hardness = 2
@@ -46,7 +47,8 @@ class Player():
         self.movex = 0
         self.movey = 0
         self.direction = "right"
-        self.status = "standing"
+        self.running = False
+        self.standing = True
         self.frame_count = 0
         self.mine_count = 0
         self.x = 100
@@ -54,60 +56,60 @@ class Player():
         self.anim = 0
         self.frames = [pygame.image.load("pixels/" + img) for img in os.listdir('pixels')]
         self.mine_frames = [pygame.image.load("mining/" + img) for img in os.listdir('mining')]
-        self.hitbox = pygame.Rect(2,9,15,17)
 
     def update_sprites(self):
-        newImg = pygame.Surface([30,26])
+        newImg = pygame.Surface([19,17])
         newImg.fill([0,255,0])
-        self.hitbox = pygame.Rect(self.x+2*2,self.y+9*2,15*2,17*2)
-        if self.status == "mining":
-            newImg.blit(self.mine_frames[self.mine_count], (0, 0))
-        else:
-            newImg.blit(self.frames[self.frame_count], (0, 0))
+        newImg.blit(self.frames[self.frame_count], (0,0))
+        self.hitbox = pygame.Rect(self.x,self.y,19*2,17*2)
         newImg.set_colorkey([0,255,0])
         newImg = pygame.transform.scale2x(newImg)
         window.blit(newImg, (self.x, self.y))
-        pygame.draw.rect(window, (255,0,0), self.hitbox, 2)
+        #pygame.draw.rect(window, (255,0,0), self.hitbox, 2)
     
     def update_frame(self, delta):
-        if self.status == "running":
+        if self.running:
             self.anim += 50 * delta
             if self.anim >= 5:
                 self.anim = 0
                 self.frame_count += 1
                 if self.frame_count > 3:
                     self.frame_count = 0
-        if self.status == "standing":
+        if self.standing:
             self.frame_count = 3
             self.anim = 0
-        if self.status == "mining":
-            self.anim += 50 * delta
-            if self.anim >= 5:
-                self.anim = 0
-                self.mine_count += 1
-                if self.mine_count > 7:
-                    self.mine_count = 2
 
     def player_movement(self, delta):
         self.x += self.movex * delta
         self.y += self.movey * delta
 
-Mark = Player()
+mark = Player()
 
 def player_settings(delta):
     key = pygame.key.get_pressed()
 
-    Mark.movex = (key[pygame.K_RIGHT] - key[pygame.K_LEFT]) * 200
-    Mark.movey = (key[pygame.K_DOWN] - key[pygame.K_UP]) * 200
+    mark.movex = (key[pygame.K_RIGHT] - key[pygame.K_LEFT]) * 200
+    mark.movey = (key[pygame.K_DOWN] - key[pygame.K_UP]) * 200
     
-    if Mark.movex or Mark.movey:
-        Mark.status = "running"
+    if mark.movex or mark.movey:
+        mark.running = True
+        mark.standing = False
     else:
-        Mark.status = "standing"
+        mark.standing = True
+        mark.running = False
 
-    Mark.update_frame(delta)
-    Mark.update_sprites()
-    Mark.player_movement(delta)
+    if mark.movex > 0: mark.direction = "right"
+    if mark.movex < 0: mark.direction = "left"
+    if mark.movey < 0: mark.direction = "up"
+    if mark.movey > 0: mark.direction = "down"
+
+    #if not (mark.movey or mark.movex): mark.direction = "none"
+
+    #print(mark.direction)
+
+    mark.update_frame(delta)
+    mark.update_sprites()
+    mark.player_movement(delta)
 
 
 def display():
@@ -126,18 +128,46 @@ while game_run:
 
     player_settings(delta)
 
+    keys = pygame.key.get_pressed()
+
     for ore in ores:
         rect = pygame.Rect(ore.pos[0],ore.pos[1],40,40)
         window.blit(pygame.transform.scale_by(ore.img,40/17), ore.pos)
-        pygame.draw.rect(window,255,rect,2)
-        if ore.breaking > 0:
-            pygame.draw.rect(window, ((ore.hardness-ore.breaking) / ore.hardness * -255 + 255, (ore.hardness-ore.breaking) / ore.hardness * 255, 0), (rect.x, rect.y, (ore.hardness-ore.breaking) / ore.hardness * 40, 7))
+        point = pygame.math.Vector2(mark.hitbox.center)
+        break_levels = [(ore.hardness / i) - ore.hardness / 4 for i in range(1,4)]
+        break_levels.reverse()
 
-        if Mark.hitbox.colliderect(rect):
-            match collideSide(Mark.hitbox, rect):
+        #print(break_levels)
+
+        match mark.direction:
+            case "up":
+                point.y -= 32
+            case "down":
+                point.y += 32
+            case "right":
+                point.x += 30
+            case "left": 
+                point.x -= 30
+        #pygame.draw.circle(window, (255,0,0), point, 2)
+
+        if rect.collidepoint(point):
+            if keys[pygame.K_x]:
+                ore.breaking += delta
+
+        for i in range(3):
+            if ore.breaking >= break_levels[i]:
+                window.blit(pygame.transform.scale_by(ore.breaking_frames[i],40/17), ore.pos)
+
+        if mark.hitbox.colliderect(rect):
+            match collideSide(mark.hitbox, rect):
                 case "up":
-                    Mark.movey = 0
-                    Mark.y -= Mark.hitbox.top - rect.bottom
+                    mark.y = rect.bottom
+                case "down":
+                    mark.y = rect.top - 17 * 2
+                case "left":
+                    mark.x = rect.right
+                case "right":
+                    mark.x = rect.left - 19 * 2
         if ore.breaking > ore.hardness:
             ores.remove(ore)
 
@@ -146,5 +176,5 @@ while game_run:
             game_run = False
 
     pygame.display.update()
-    print(Mark.status)
+    #print(mark.status)
 pygame.quit()
